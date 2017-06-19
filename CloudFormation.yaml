@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  ExecuteLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      - arn:aws:iam::aws:policy/AmazonPollyFullAccess
+      Path: "/"
+  PlaceOrder:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: places order in DynamoDB table
+      FunctionName: PlaceOrder
+      Handler: PlaceOrder.handler
+      Role:
+        Fn::GetAtt:
+        - ExecuteLambdaRole
+        - Arn
+      Code:
+        S3Bucket: gopizza-lambda-functions
+        S3Key: LambdaFunctions.zip
+      Runtime: nodejs6.10
+      Timeout: '10'
+  ProcessPayment:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: processes the payment
+      FunctionName: ProcessPayment
+      Handler: ProcessPayment.handler
+      Role:
+        Fn::GetAtt:
+        - ExecuteLambdaRole
+        - Arn
+      Code:
+        S3Bucket: gopizza-lambda-functions
+        S3Key: LambdaFunctions.zip
+      Runtime: nodejs6.10
+      Timeout: '10'
+  ConfirmOrder:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: makes the order status confirmed
+      FunctionName: ConfirmOrder
+      Handler: ConfirmOrder.handler
+      Role:
+        Fn::GetAtt:
+        - ExecuteLambdaRole
+        - Arn
+      Code:
+        S3Bucket: gopizza-lambda-functions
+        S3Key: LambdaFunctions.zip
+      Runtime: nodejs6.10
+      Timeout: '10'
+  CancelOrder:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: cancels the order
+      FunctionName: CancelOrder
+      Handler: CancelOrder.handler
+      Role:
+        Fn::GetAtt:
+        - ExecuteLambdaRole
+        - Arn
+      Code:
+        S3Bucket: gopizza-lambda-functions
+        S3Key: LambdaFunctions.zip
+      Runtime: nodejs6.10
+      Timeout: '10'
+  NotifyUser:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: notifies order status to the user
+      FunctionName: NotifyUser
+      Handler: NotifyUser.handler
+      Role:
+        Fn::GetAtt:
+        - ExecuteLambdaRole
+        - Arn
+      Code:
+        S3Bucket: gopizza-lambda-functions
+        S3Key: LambdaFunctions.zip
+      Runtime: nodejs6.10
+      Timeout: '10'
+  NotifyWithPolly:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: converts order status to speech and uploads mp3 file on S3
+      FunctionName: NotifyWithPolly
+      Handler: NotifyWithPolly.handler
+      Role:
+        Fn::GetAtt:
+        - ExecuteLambdaRole
+        - Arn
+      Code:
+        S3Bucket: gopizza-lambda-functions
+        S3Key: LambdaFunctions.zip
+      Runtime: nodejs6.10
+      Timeout: '10'

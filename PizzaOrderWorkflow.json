@@ -1,0 +1,52 @@
+{
+    "Comment": "Pizza Order State Machine.",
+    "StartAt": "PlaceOrder",
+    "States": {
+        "PlaceOrder": {
+            "Type": "Task",
+            "Resource": "",
+            "Next": "ProcessPayment"
+        },
+        "ProcessPayment": {
+            "Type": "Task",
+            "Resource": "",
+            "Next": "IsPaymentSuccessful"
+        },
+        "IsPaymentSuccessful": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.paymentSuccess",
+                    "BooleanEquals": true,
+                    "Next": "ConfirmOrder"
+                },
+                {
+                    "Variable": "$.paymentSuccess",
+                    "BooleanEquals": false,
+                    "Next": "CancelOrder"
+                }
+            ]
+        },
+        "ConfirmOrder": {
+            "Type": "Task",
+            "Resource": "",
+            "Next": "NotifyUser"
+        },
+        "CancelOrder": {
+            "Type": "Task",
+            "Resource": "",
+            "Next": "NotifyUser"
+        },
+        "NotifyUser": {
+            "Type": "Task",
+            "Resource": "",
+            "Next": "NotifyWithPolly"
+        },
+       
+        "NotifyWithPolly": {
+            "Type": "Task",
+            "Resource": "",
+            "End": true
+        }
+    }
+}
